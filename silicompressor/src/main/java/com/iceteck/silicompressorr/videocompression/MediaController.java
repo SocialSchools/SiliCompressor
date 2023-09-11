@@ -159,7 +159,7 @@ public class MediaController {
 
     @TargetApi(16)
     private long readAndWriteTrack(MediaExtractor extractor, MP4Builder mediaMuxer, MediaCodec.BufferInfo info, long start, long end, File file, boolean isAudio) throws Exception {
-        Log.e("RVD tmessages", "isAudio = " + isAudio);
+        Log.e("RVD tmessages", "readAndWriteTrack isAudio = " + isAudio);
         int trackIndex = selectTrack(extractor, isAudio);
         if (trackIndex >= 0) {
             extractor.selectTrack(trackIndex);
@@ -175,14 +175,18 @@ public class MediaController {
             ByteBuffer buffer = ByteBuffer.allocateDirect(maxBufferSize);
             long startTime = -1;
 
+            Log.e("RVD tmessages", "readAndWriteTrack  A");
             while (!inputDone) {
+                Log.e("RVD tmessages", "readAndWriteTrack  B");
 
                 boolean eof = false;
                 int index = extractor.getSampleTrackIndex();
+                Log.e("RVD tmessages", "readAndWriteTrack  C " + index + " ... " + trackIndex);
                 if (index == trackIndex) {
                     info.size = extractor.readSampleData(buffer, 0);
 
                     if (info.size < 0) {
+                        Log.e("RVD tmessages", "readAndWriteTrack  D " + info.size);
                         info.size = 0;
                         eof = true;
                     } else {
@@ -190,14 +194,18 @@ public class MediaController {
                         if (start > 0 && startTime == -1) {
                             startTime = info.presentationTimeUs;
                         }
+                        Log.e("RVD tmessages", "readAndWriteTrack  E ");
                         if (end < 0 || info.presentationTimeUs < end) {
+                            Log.e("RVD tmessages", "readAndWriteTrack  F ");
                             info.offset = 0;
                             info.flags = extractor.getSampleFlags();
                             if (mediaMuxer.writeSampleData(muxerTrackIndex, buffer, info, isAudio)) {
+                                Log.e("RVD tmessages", "readAndWriteTrack  G ");
                                 // didWriteData(messageObject, file, false, false);
                             }
                             extractor.advance();
                         } else {
+                            Log.e("RVD tmessages", "readAndWriteTrack  H ");
                             eof = true;
                         }
                     }
@@ -226,7 +234,7 @@ public class MediaController {
             if (audio) {
                 if (mime.startsWith("audio/")) {
                     Log.e("RVD tmessages", "in selectTrack B = " + i);
-                    return i;
+                     return i;
                 }
             } else {
                 if (mime.startsWith("video/")) {
