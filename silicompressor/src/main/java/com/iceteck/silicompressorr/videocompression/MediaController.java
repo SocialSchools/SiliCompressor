@@ -159,6 +159,7 @@ public class MediaController {
 
     @TargetApi(16)
     private long readAndWriteTrack(MediaExtractor extractor, MP4Builder mediaMuxer, MediaCodec.BufferInfo info, long start, long end, File file, boolean isAudio) throws Exception {
+        Log.e("RVD tmessages", "isAudio = " + isAudio);
         int trackIndex = selectTrack(extractor, isAudio);
         if (trackIndex >= 0) {
             extractor.selectTrack(trackIndex);
@@ -216,12 +217,15 @@ public class MediaController {
 
     @TargetApi(16)
     private int selectTrack(MediaExtractor extractor, boolean audio) {
+        Log.e("RVD tmessages", "in selectTrack = " + audio);
+
         int numTracks = extractor.getTrackCount();
         for (int i = 0; i < numTracks; i++) {
             MediaFormat format = extractor.getTrackFormat(i);
             String mime = format.getString(MediaFormat.KEY_MIME);
             if (audio) {
                 if (mime.startsWith("audio/")) {
+                    Log.e("RVD tmessages", "in selectTrack B = " + i);
                     return i;
                 }
             } else {
